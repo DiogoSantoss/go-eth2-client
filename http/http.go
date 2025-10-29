@@ -138,6 +138,7 @@ func (s *Service) post(ctx context.Context,
 
 		return nil, errors.Join(errors.New("failed to read POST response"), err)
 	}
+	res.raw.Body = io.NopCloser(bytes.NewReader(res.body))
 
 	if resp.StatusCode == http.StatusNoContent {
 		// Nothing returned.  This is not considered an error.
@@ -290,7 +291,7 @@ func (s *Service) get(ctx context.Context,
 	}
 	defer resp.Body.Close()
 	log = log.With().Int("status_code", resp.StatusCode).Logger()
-
+	
 	res := &httpResponse{
 		statusCode: resp.StatusCode,
 		raw:        *resp,
@@ -317,6 +318,7 @@ func (s *Service) get(ctx context.Context,
 
 		return nil, errors.Join(errors.New("failed to read GET response"), err)
 	}
+	res.raw.Body = io.NopCloser(bytes.NewReader(res.body))
 
 	if resp.StatusCode == http.StatusNoContent {
 		// Nothing returned.  This is not considered an error.
